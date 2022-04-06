@@ -1,0 +1,251 @@
+SELECT *
+FROM employees;
+
+select * from departments;
+
+SELECT employee_id, first_name, department
+FROM employees;
+
+
+SELECT *
+FROM employees
+WHERE department = 'Sports';
+
+SELECT *
+FROM employees
+WHERE department LIKE '%nit%';
+
+SELECT *
+FROM employees
+WHERE department LIKE 'G%';
+
+
+SELECT *
+FROM employees
+WHERE department LIKE 'G____';
+
+select *
+from employees
+where salary >= 100000;
+
+select *
+from employees
+where salary <= 100000;
+
+--show me  firstname last name department salary --> emplloyee who is working in clothing dep and more than 90000
+
+SELECT first_name, last_name, department, salary
+FROM employees
+WHERE department = 'Clothing' AND salary > 90000;
+
+SELECT first_name, last_name, department, salary
+FROM employees
+WHERE department = 'Clothing' OR salary > 90000;
+
+
+--show me  firstname last name department salary --> emplloyee who is working in clothing or pharmacy dep and less than 40000
+
+
+SELECT first_name, last_name, department, salary
+FROM employees
+WHERE salary < 40000 AND (department = 'Clothing' OR department = 'Pharmacy');
+
+SELECT *
+FROM employees
+WHERE salary < 40000 AND department IN ( 'Clothing' , 'Pharmacy');
+
+--show me all not belongs to sport dep
+
+SELECT *
+FROM employees
+WHERE department !=  'Sports';
+
+SELECT *
+FROM employees
+WHERE department <>  'Sports';
+
+SELECT *
+FROM employees
+WHERE NOT department !=  'Sports';
+
+SELECT first_name, email
+FROM employees
+WHERE email is NOT NULL;
+
+SELECT first_name, email, salary
+FROM employees
+WHERE email is NOT NULL AND salary BETWEEN 80000 AND 100000;
+
+-- write a query that returns the first name and email of females that work in the Tools Department
+-- having a salary greater than 110000
+
+SELECT first_name, email
+FROM employees
+WHERE gender = 'F'  AND department = 'Tools' AND salary > 110000;
+
+
+-- ASC 0-9 and a-z
+SELECT first_name, email, employee_id
+FROM employees
+ORDER BY employee_id ASC;
+
+---DESC 9-0 z-a
+SELECT first_name, email, employee_id
+FROM employees
+ORDER BY employee_id DESC;
+
+---DESC 9-0 z-a based on name
+SELECT first_name, email, employee_id
+FROM employees
+ORDER BY first_name DESC;
+
+-- and as default is with limit 5 on display
+SELECT first_name, email, employee_id
+FROM employees
+ORDER BY employee_id
+LIMIT 5;
+
+SELECT first_name, email, employee_id
+FROM employees
+ORDER BY first_name
+FETCH FIRST  5 ROWS ONLY;
+
+--how to see only unique department
+SELECT DISTINCT department
+FROM employees;
+
+--choose name for columns but not change name of database
+SELECT salary AS  annual_salary
+FROM employees;
+
+-- Write a query that the name and ages of the top 4 oldest students
+SELECT student_name, age
+FROM students
+ORDER BY age DESC
+LIMIT 4;
+
+--- STRING Manipulation
+SELECT UPPER(first_name),LOWER(last_name)
+FROM employees;
+
+SELECT LENGTH(first_name), first_name
+FROM employees
+LIMIT 5;
+
+SELECT LENGTH(TRIM('     Hello      '));
+
+-- create full name column and diyplay them without changing original data
+SELECT first_name || ' ' || last_name as full_names
+FROM employees;
+
+
+--boolean value
+SELECT first_name, salary, (salary>140000) as RichPicler
+FROM employees
+ORDER BY salary DESC;
+
+--Subsitrig
+
+SELECT SUBSTRING('caliskan mehmet efendi',1,4);
+SELECT SUBSTRING('caliskan mehmet efendi'FROM 1 FOR 6);
+
+--display one initials of first, last_name
+SELECT first_name, last_name, SUBSTRING(first_name,1,1) || ' ' || SUBSTRING(last_name FROM 1 FOR 1) as initial
+FROM employees
+LIMIT 12;
+
+--REPLACE for display without changing original data
+SELECT department, REPLACE (department, 'Clothing', 'Clothes')
+FROM departments;
+
+-- String manupilation functions is not changing original table data
+
+--Aggregate functions
+
+SELECT MAX(salary)
+FROM employees;
+
+SELECT MIN(salary)
+FROM employees;
+
+SELECT AVG(salary)
+FROM employees;
+
+SELECT ROUND(AVG(salary),1)
+FROM employees;
+
+SELECT COUNT(salary)
+FROM employees;
+
+-- count neglect NULL values
+SELECT COUNT(email)
+FROM employees;
+
+
+SELECT SUM(salary)
+FROM employees;
+
+SELECT AVG(salary)
+FROM employees
+WHERE department = 'Clothing';
+
+--Who is making lowest salary static
+SELECT *
+FROM employees
+WHERE salary = (20542);
+
+--Who is making lowest salary dynamic
+SELECT *
+FROM employees
+WHERE salary = (SELECT MIN(salary)
+                FROM employees);
+
+--show me all unique email domains?
+SELECT email
+from employees;
+
+-- how many employees working in Pharmacy dep
+SELECT Count(*)
+FROM employees
+WHERE department = 'Pharmacy';
+
+--how many employee working for each department
+SELECT COUNT(*), department, MAX(salary) , MIN(salary),ROUND(AVG(salary))
+FROM employees
+GROUP BY department;
+
+-- list the departments where they have more than 40 employee
+SELECT COUNT(*), department
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 40
+ORDER BY department;
+
+--all employee department is not Garden than group them by department and daprtment  filter about count check this out
+SELECT COUNT(*), department
+FROM employees
+WHERE department <> 'Garden'
+GROUP BY department
+HAVING COUNT(*) > 40
+ORDER BY department;
+
+
+---Show me the duplicate email domains and how many times they repeat PIX
+
+
+SELECT  COUNT(*), SUBSTRING(email, POSITION('@' IN EMAIL) + 1) as email_domain
+FROM employees
+WHERE email is not NULL
+GROUP BY email_domain
+HAVING count(*) > 1
+ORDER BY COUNT(*) desc;
+
+
+SELECT first_name, salary,
+       CASE
+            WHEN salary < 80000 THEN 'UNDER PAID'
+            WHEN salary > 80000 THEN ' PAID WELL'
+            ELSE 'UNPAID'
+            END as category
+from employees
+LIMIT 20;
